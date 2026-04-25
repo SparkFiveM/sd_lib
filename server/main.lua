@@ -77,6 +77,7 @@ function GetJobEmployees(jobName)
                 onlineIds[player.PlayerData.citizenid] = true
                 table.insert(employees, {
                     id = player.PlayerData.source,
+                    identifier = player.PlayerData.citizenid,
                     name = player.PlayerData.charinfo.firstname .. ' ' .. player.PlayerData.charinfo.lastname,
                     grade = job.grade.level,
                     grade_name = job.grade.name,
@@ -93,6 +94,7 @@ function GetJobEmployees(jobName)
                     local charinfo = json.decode(player.charinfo or '{}')
                     table.insert(employees, {
                         id = nil,
+                        identifier = player.citizenid,
                         name = (charinfo.firstname or '') .. ' ' .. (charinfo.lastname or ''),
                         grade = jobData.grade or 0,
                         grade_name = jobData.grade_name or 'Unknown',
@@ -109,6 +111,7 @@ function GetJobEmployees(jobName)
                 onlineIds[player.PlayerData.citizenid] = true
                 table.insert(employees, {
                     id = player.PlayerData.source,
+                    identifier = player.PlayerData.citizenid,
                     name = player.PlayerData.charinfo.firstname .. ' ' .. player.PlayerData.charinfo.lastname,
                     grade = player.PlayerData.job.grade.level,
                     grade_name = player.PlayerData.job.grade.name,
@@ -125,6 +128,7 @@ function GetJobEmployees(jobName)
                     local charinfo = json.decode(player.charinfo or '{}')
                     table.insert(employees, {
                         id = nil,
+                        identifier = player.citizenid,
                         name = (charinfo.firstname or '') .. ' ' .. (charinfo.lastname or ''),
                         grade = jobData.grade or 0,
                         grade_name = jobData.grade_name or 'Unknown',
@@ -141,6 +145,7 @@ function GetJobEmployees(jobName)
                 onlineIds[xPlayer.identifier] = true
                 table.insert(employees, {
                     id = xPlayer.source,
+                    identifier = xPlayer.identifier,
                     name = xPlayer.getName(),
                     grade = job.grade,
                     grade_name = job.grade_name,
@@ -155,6 +160,7 @@ function GetJobEmployees(jobName)
                 if not onlineIds[player.identifier] then
                     table.insert(employees, {
                         id = nil,
+                        identifier = player.identifier,
                         name = player.firstname .. ' ' .. player.lastname,
                         grade = player.job_grade,
                         grade_name = tostring(player.job_grade),
