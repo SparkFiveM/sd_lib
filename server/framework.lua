@@ -233,59 +233,6 @@ function GetJobGrades(jobName)
     return {}
 end
 
-function GetPlayers()
-    local players = {}
-    
-    if currentFramework == 'qb' or currentFramework == 'qbx' then
-        if currentFramework == 'qb' and not QBCore then return {} end
-         
-         local result = MySQL.query.await('SELECT * FROM players', {})
-         if result then
-            for i = 1, #result do
-                local player = result[i]
-                local charinfo = json.decode(player.charinfo or '{}')
-                local money = {cash = player.cash or 0, bank = player.bank or 0}
-                local jobData = json.decode(player.job or '{}')
-                local job = {
-                    name = jobData.name or 'unemployed',
-                    grade = jobData.grade or 0,
-                    grade_name = jobData.grade_name or 'Freelancer'
-                }
-                players[player.license] = {
-                    identifier = player.license,
-                    name = (charinfo.firstname or '') .. ' ' .. (charinfo.lastname or ''),
-                    job = job,
-                    money = money
-                }
-            end
-         end
-    elseif currentFramework == 'esx' then
-        if not ESX then return {} end
-        local result = MySQL.query.await('SELECT * FROM users', {})
-        if result then
-            for i = 1, #result do
-                local user = result[i]
-                local accounts = json.decode(user.accounts or '{}')
-                players[user.identifier] = {
-                    identifier = user.identifier,
-                    name = user.firstname .. ' ' .. user.lastname,
-                    job = {
-                        name = user.job or 'unemployed',
-                        grade = user.job_grade or 0,
-                        grade_name = user.job_grade and user.job_grade or 'Freelancer'
-                    },
-                    money = {
-                        cash = accounts.money or 0,
-                        bank = accounts.bank or 0
-                    }
-                }
-            end
-        end
-    end
-    
-    return players
-end
-
 function GetPlayerData(source)
     local player = GetPlayer(source)
     if currentFramework == 'qb' or currentFramework == 'qbx' then

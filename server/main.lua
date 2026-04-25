@@ -102,7 +102,7 @@ function GetJobEmployees(jobName)
             end
         end
     elseif framework == 'qbx' then
-        local players = GetPlayers()
+        local players = exports.qbx_core:GetQBPlayers()
         for _, playerId in ipairs(players) do
             local player = exports.qbx_core:GetPlayer(tonumber(playerId))
             if player and player.PlayerData and player.PlayerData.job and player.PlayerData.job.name == jobName then
