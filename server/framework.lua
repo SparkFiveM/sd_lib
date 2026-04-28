@@ -19,15 +19,11 @@ if currentFramework == 'qb' then
     end
 elseif currentFramework == 'esx' then
     if GetResourceState('es_extended') == 'started' then
-        local ok, obj = pcall(function()
-            if exports['es_extended'] and exports['es_extended'].getSharedObject then
-                return exports['es_extended']:getSharedObject()
-            end
-        end)
-        if not ok or not obj then
-            TriggerEvent('esx:getSharedObject', function(o) obj = o end)
+        if exports['es_extended'] and exports['es_extended'].getSharedObject then
+            ESX = exports['es_extended']:getSharedObject()
+        else
+            TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
         end
-        ESX = obj
     end
 end
 
