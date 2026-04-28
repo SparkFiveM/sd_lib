@@ -24,7 +24,6 @@ client_scripts {
     'client/zones.lua',
     'client/callbacks.lua',
     'client/voice.lua',
-    
     'client/main.lua'
 }
 server_scripts {
@@ -32,9 +31,5 @@ server_scripts {
     'server/framework.lua',
     'server/inventory.lua',
     'server/callbacks.lua',
-    
     'server/main.lua'
-}
-escrow_ignore {
-    'shared/config.lua'
 }
