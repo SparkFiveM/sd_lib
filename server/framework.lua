@@ -51,24 +51,13 @@ function GetPlayer(source)
     return source
 end
 
-function GetPlayerObject(src)
-    if currentFramework == 'qb' then
-        return QBCore.Functions.GetPlayer(src)
-    elseif currentFramework == 'qbx' then
-        return exports.qbx_core:GetPlayer(src)
-    elseif currentFramework == 'esx' then
-        return ESX and ESX.GetPlayerFromId(src) or nil
-    end
-    return src
-end
-
 function GetPlayerIdentifier(src)
     if currentFramework == 'qb' then
         return GetPlayerIdentifierByType(src, 'license') or nil
     elseif currentFramework == 'qbx' then
         return GetPlayerIdentifierByType(src, 'license2') or GetPlayerIdentifierByType(src, 'license') or nil
     elseif currentFramework == 'esx' then
-        local xPlayer = GetPlayerObject(src)
+        local xPlayer = GetPlayer(src)
         if xPlayer and xPlayer.identifier then return xPlayer.identifier end
         return GetPlayerIdentifierByType(src, 'license') or (GetPlayerIdentifiers(src)[1] or ('src:'..tostring(src)))
     end
@@ -76,7 +65,7 @@ function GetPlayerIdentifier(src)
 end
 
 function GetPlayerFullName(src)
-    local player = GetPlayerObject(src)
+    local player = GetPlayer(src)
     
     if currentFramework == 'qb' or currentFramework == 'qbx' then
         if player and player.PlayerData then
@@ -95,7 +84,7 @@ function GetPlayerFullName(src)
 end
 
 function GetPlayerJobName(source)
-    local player = GetPlayerObject(source)
+    local player = GetPlayer(source)
     
     if currentFramework == 'qb' or currentFramework == 'qbx' then
         if player and player.PlayerData and player.PlayerData.job then
@@ -252,7 +241,6 @@ function GetCharId(source)
 end
 
 exports('GetPlayer', GetPlayer)
-exports('GetPlayerObject', GetPlayerObject)
 exports('GetPlayerIdentifier', GetPlayerIdentifier)
 exports('GetPlayerFullName', GetPlayerFullName)
 exports('GetPlayerJobName', GetPlayerJobName)
