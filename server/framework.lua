@@ -240,6 +240,28 @@ function GetCharId(source)
     return nil
 end
 
+function GetPlayerFromIdentifier(identifier)
+    if currentFramework == 'qb' then
+        return QBCore.Functions.GetPlayerByLicense(identifier)
+    elseif currentFramework == 'qbx' then
+        return exports.qbx_core:GetPlayerByLicense(identifier)
+    elseif currentFramework == 'esx' then
+        return ESX.GetPlayerFromIdentifier(identifier)
+    end
+    return nil
+end
+
+function GetPlayers()
+    if currentFramework == 'qb' then
+        return QBCore.Functions.GetPlayers()
+    elseif currentFramework == 'qbx' then
+        return exports.qbx_core:GetQBPlayers()
+    elseif currentFramework == 'esx' then
+        return ESX.GetPlayers()
+    end
+    return {}
+end
+
 exports('GetPlayer', GetPlayer)
 exports('GetPlayerIdentifier', GetPlayerIdentifier)
 exports('GetPlayerFullName', GetPlayerFullName)
@@ -249,5 +271,6 @@ exports('AddMoney', AddMoney)
 exports('RemoveMoney', RemoveMoney)
 exports('GetJobGrades', GetJobGrades)
 exports('GetPlayers', GetPlayers)
+exports('GetPlayerFromIdentifier', GetPlayerFromIdentifier)
 exports('GetPlayerData', GetPlayerData)
 exports('GetCharId', GetCharId)
