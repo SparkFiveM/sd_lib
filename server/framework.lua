@@ -244,7 +244,7 @@ function GetPlayerFromIdentifier(identifier)
     if currentFramework == 'qb' then
         return QBCore.Functions.GetPlayerByLicense(identifier)
     elseif currentFramework == 'qbx' then
-        return exports.qbx_core:GetPlayerByLicense(identifier)
+        return exports.qbx_core:GetPlayer(identifier)
     elseif currentFramework == 'esx' then
         return ESX.GetPlayerFromIdentifier(identifier)
     end
