@@ -1,4 +1,3 @@
-local Config = Config or {}
 
 local function GetNotificationSystem()
     local system = Config.Notification.System

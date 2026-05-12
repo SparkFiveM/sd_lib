@@ -1,4 +1,3 @@
-local Config = Config or {}
 
 function GetRadioChannel()
     local system = Config.VoiceSystem

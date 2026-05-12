@@ -1,4 +1,3 @@
-local Config = Config or {}
 
 local function GetInventorySystem()
     local system = Config.Inventory.System

@@ -1,4 +1,3 @@
-local Config = Config or {}
 
 local function GetDialogSystem()
     local system = Config.Dialog.System
@@ -13,6 +12,7 @@ end
 
 function ShowDialog(header, inputs, callback)
     local system = GetDialogSystem()
+    local dialog = nil
     
     if system == 'esx_menu_dialog' then
         if GetResourceState('esx_menu_dialog') ~= 'missing' then
@@ -38,18 +38,19 @@ function ShowDialog(header, inputs, callback)
             Wait(0)
         end
         if GetOnscreenKeyboardResult() then
-            if callback then callback({input = GetOnscreenKeyboardResult()}) end
+            dialog = {input = GetOnscreenKeyboardResult()}
+            if callback then callback(dialog) end
         end
         
     elseif system == 'ox_lib' then
         if GetResourceState('ox_lib') ~= 'missing' and lib and lib.inputDialog then
-            local dialog = lib.inputDialog(header, inputs)
+            dialog = lib.inputDialog(header, inputs)
             if callback then callback(dialog) end
         end
         
     elseif system == 'qb-input' then
         if GetResourceState('qb-input') ~= 'missing' then
-            local dialog = exports['qb-input']:ShowInput({
+            dialog = exports['qb-input']:ShowInput({
                 header = header,
                 submitText = "Submit",
                 inputs = inputs
@@ -57,6 +58,7 @@ function ShowDialog(header, inputs, callback)
             if callback then callback(dialog) end
         end
     end
+    return dialog
 end
 
 function CloseDialog()

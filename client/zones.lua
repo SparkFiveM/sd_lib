@@ -1,4 +1,3 @@
-local Config = Config or {}
 local ResourceZones = {}
 
 local function GetZonesSystem()

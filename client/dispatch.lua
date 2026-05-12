@@ -1,4 +1,3 @@
-local Config = Config or {}
 
 local function GetDispatchSystem()
     local system = Config.Dispatch.System

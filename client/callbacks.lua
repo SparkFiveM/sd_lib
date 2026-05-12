@@ -1,4 +1,3 @@
-local Config = Config or {}
 
 function TriggerCallback(name, cb, ...)
     local system = Config.Framework

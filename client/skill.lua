@@ -1,4 +1,3 @@
-local Config = Config or {}
 
 local function GetSkillcheckSystem()
     local system = Config.Skillcheck.System

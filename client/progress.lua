@@ -1,4 +1,3 @@
-local Config = Config or {}
 
 local function GetProgressSystem()
     local system = Config.Progress.System
