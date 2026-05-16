@@ -218,17 +218,19 @@ function CreateInteractionPoint(coords, options)
                 for i, opt in ipairs(options.options) do
                     local qbOpt = {}
                     for k, v in pairs(opt) do qbOpt[k] = v end
+                    qbOpt.type = qbOpt.type or 'client'
                     if opt.canInteract then qbOpt.canInteract = opt.canInteract end
                     table.insert(processedOptions, qbOpt)
                 end
             end
-            local pointId = exports['qb-target']:AddBoxZone(options.name or 'interaction_zone', coords, 
-                options.size or vector3(2.0, 2.0, 2.0), {
-                    name = options.name or 'interaction_zone',
+            local size = options.size or vector3(2.0, 2.0, 2.0)
+            local pointId = exports['qb-target']:AddBoxZone(options.name or options.id or 'interaction_zone', coords, 
+                size.x, size.y, {
+                    name = options.name or options.id or 'interaction_zone',
                     heading = options.rotation or 0,
                     debugPoly = options.debug or false,
-                    minZ = coords.z - 1.0,
-                    maxZ = coords.z + 1.0,
+                    minZ = coords.z - (size.z / 2),
+                    maxZ = coords.z + (size.z / 2),
                 }, {
                     options = processedOptions,
                     distance = options.distance or Config.Interaction.DefaultDistance
@@ -425,6 +427,7 @@ function CreateVehicleInteraction(options)
              for i, opt in ipairs(options.options) do
                  local qbOpt = {}
                  for k, v in pairs(opt) do qbOpt[k] = v end
+                 qbOpt.type = qbOpt.type or 'client'
                  if opt.canInteract then qbOpt.canInteract = opt.canInteract end
                  table.insert(processedOptions, qbOpt)
              end
@@ -611,6 +614,7 @@ function CreateModelInteraction(models, options)
              for i, opt in ipairs(options.options) do
                  local qbOpt = {}
                  for k, v in pairs(opt) do qbOpt[k] = v end
+                 qbOpt.type = qbOpt.type or 'client'
                  if opt.canInteract then qbOpt.canInteract = opt.canInteract end
                  table.insert(processedOptions, qbOpt)
              end
@@ -774,6 +778,7 @@ function CreateEntityInteraction(entity, options)
              for i, opt in ipairs(options.options) do
                  local qbOpt = {}
                  for k, v in pairs(opt) do qbOpt[k] = v end
+                 qbOpt.type = qbOpt.type or 'client'
                  if opt.canInteract then qbOpt.canInteract = opt.canInteract end
                  table.insert(processedOptions, qbOpt)
              end
