@@ -1,3 +1,4 @@
+local lastRadioState = false
 
 function GetRadioChannel()
     local system = Config.VoiceSystem
@@ -20,18 +21,16 @@ function IsUsingRadio()
     
     if system == 'pma-voice' then
         if GetResourceState('pma-voice') ~= 'missing' then
-            return LocalPlayer.state.radioTalking or false
+            return lastRadioState
         end
         
     elseif system == 'saltychat' then
         if GetResourceState('saltychat') ~= 'missing' then
-            return exports.saltychat:GetRadioSpeaker() or false
+            return lastRadioState
         end
     end
     return false
 end
-
-local lastRadioState = false
 
 local function SetRadioState(isUsingRadio)
     isUsingRadio = isUsingRadio == true
