@@ -11,7 +11,7 @@ Config.Inventory = {
 
 ---[[====[ INTERACTION SYSTEM SETTINGS ]====]]
 Config.Interaction = {
-    System = 'auto', -- 'auto', 'lunar_bridge', 'ox_target', 'qb-target', 'textui', 'drawtext'
+    System = 'auto', -- 'auto', 'lunar_bridge', 'ox_target', 'qb-target', 'is_interaction', 'textui', 'drawtext'
     DefaultDistance = 2.0
 }
 

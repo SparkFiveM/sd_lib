@@ -98,6 +98,7 @@ local function GetInteractionSystem()
         if GetResourceState('lunar_bridge') ~= 'missing' then return 'lunar_bridge'
         elseif GetResourceState('ox_target') ~= 'missing' then return 'ox_target'
         elseif GetResourceState('qb-target') ~= 'missing' then return 'qb-target'
+        elseif GetResourceState('is_interaction') ~= 'missing' then return 'is_interaction'
         else return 'textui' end
     end
     return system
@@ -270,6 +271,37 @@ function CreateInteractionPoint(coords, options)
                 options = lbOptions
             })
             if pointId then ResourceInteractions[resourceName].points[pointId] = true end
+            return pointId
+        end
+
+    elseif system == 'is_interaction' then
+        if GetResourceState('is_interaction') ~= 'missing' then
+            local isOptions = {}
+            local defaultDistance = options.distance or Config.Interaction.DefaultDistance
+            if options.options then
+                for i, opt in ipairs(options.options) do
+                    table.insert(isOptions, {
+                        name  = opt.name or ('ep_opt_' .. i),
+                        label = opt.label or 'Interact',
+                        icon  = opt.icon or 'fa-solid fa-hand-pointer',
+                        onSelect = opt.onSelect or opt.action or function() end,
+                        canInteract = opt.canInteract,
+                    })
+                end
+            end
+            local pointName = 'sd_' .. resourceName .. '_' .. math.random(10000, 99999)
+            local coordsVec = vec3(coords.x, coords.y, coords.z)
+            exports['is_interaction']:addInteractionCoords(pointName, coordsVec, {
+                distance = defaultDistance,
+                distanceText = defaultDistance,
+                options = isOptions,
+            })
+            local pointId = 'is_' .. pointName
+            ResourceInteractions[resourceName].points[pointId] = {
+                type   = 'is_interaction',
+                name   = pointName,
+                coords = coordsVec,
+            }
             return pointId
         end
     end
@@ -840,9 +872,20 @@ function RemoveInteractionPoint(pointId)
     end
     
     local system = GetInteractionSystem()
-    if system == 'ox_target' then exports.ox_target:removeZone(pointId)
-    elseif system == 'qb-target' then exports['qb-target']:RemoveZone(pointId)
-    else exports['sd_lib']:HideTextUI()
+    if system == 'ox_target' then
+        exports.ox_target:removeZone(pointId)
+    elseif system == 'qb-target' then
+        exports['qb-target']:RemoveZone(pointId)
+    elseif system == 'is_interaction' then
+        for resourceName, interactions in pairs(ResourceInteractions) do
+            local data = interactions.points and interactions.points[pointId]
+            if data and type(data) == 'table' and data.type == 'is_interaction' then
+                exports['is_interaction']:removeCoords(data.coords, data.name)
+                break
+            end
+        end
+    else
+        exports['sd_lib']:HideTextUI()
     end
 end
 
