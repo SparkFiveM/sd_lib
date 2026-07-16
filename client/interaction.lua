@@ -276,31 +276,92 @@ function CreateInteractionPoint(coords, options)
 
     elseif system == 'is_interaction' then
         if GetResourceState('is_interaction') ~= 'missing' then
-            local isOptions = {}
             local defaultDistance = options.distance or Config.Interaction.DefaultDistance
-            if options.options then
-                for i, opt in ipairs(options.options) do
-                    table.insert(isOptions, {
-                        name  = opt.name or ('ep_opt_' .. i),
-                        label = opt.label or 'Interact',
-                        icon  = opt.icon or 'fa-solid fa-hand-pointer',
-                        onSelect = opt.onSelect or opt.action or function() end,
-                        canInteract = opt.canInteract,
-                    })
-                end
-            end
-            local pointName = 'sd_' .. resourceName .. '_' .. math.random(10000, 99999)
+            local pointName = options.name or options.id or ('sd_' .. resourceName .. '_' .. math.random(10000, 99999))
             local coordsVec = vec3(coords.x, coords.y, coords.z)
-            exports['is_interaction']:addInteractionCoords(pointName, coordsVec, {
-                distance = defaultDistance,
-                distanceText = defaultDistance,
-                options = isOptions,
-            })
-            local pointId = 'is_' .. pointName
+            
+            local isRegistered = false
+            local threadActive = true
+            local lastRegisteredOptionsHash = ""
+
+            local function registerPoint(filteredOptions)
+                exports['is_interaction']:addInteractionCoords(pointName, coordsVec, {
+                    distance = defaultDistance,
+                    distanceText = defaultDistance,
+                    options = filteredOptions,
+                })
+            end
+
+            local function unregisterPoint()
+                exports['is_interaction']:removeCoords(coordsVec, pointName)
+            end
+
+            CreateThread(function()
+                while threadActive do
+                    local allowedOptions = {}
+                    local optionHashParts = {}
+
+                    if options.options and #options.options > 0 then
+                        for i, opt in ipairs(options.options) do
+                            local optAllowed = true
+                            if opt.canInteract then
+                                local status, val = pcall(opt.canInteract)
+                                if status then
+                                    optAllowed = val
+                                else
+                                    optAllowed = false
+                                end
+                            end
+
+                            if optAllowed then
+                                table.insert(allowedOptions, {
+                                    name  = opt.name or ('ep_opt_' .. i),
+                                    label = opt.label or 'Interact',
+                                    icon  = opt.icon or 'fa-solid fa-hand-pointer',
+                                    onSelect = function(entity)
+                                        if opt.canInteract and not opt.canInteract(entity) then return end
+                                        if opt.onSelect then opt.onSelect(entity)
+                                        elseif opt.action then opt.action(entity) end
+                                    end,
+                                })
+                                table.insert(optionHashParts, opt.name or ('ep_opt_' .. i))
+                            end
+                        end
+                    end
+
+                    local currentHash = table.concat(optionHashParts, ",")
+
+                    if #allowedOptions > 0 then
+                        if not isRegistered or currentHash ~= lastRegisteredOptionsHash then
+                            if isRegistered then
+                                unregisterPoint()
+                            end
+                            registerPoint(allowedOptions)
+                            isRegistered = true
+                            lastRegisteredOptionsHash = currentHash
+                        end
+                    else
+                        if isRegistered then
+                            unregisterPoint()
+                            isRegistered = false
+                            lastRegisteredOptionsHash = ""
+                        end
+                    end
+                    Wait(500)
+                end
+            end)
+
+            local pointId = pointName
             ResourceInteractions[resourceName].points[pointId] = {
                 type   = 'is_interaction',
                 name   = pointName,
                 coords = coordsVec,
+                stopThread = function()
+                    threadActive = false
+                    if isRegistered then
+                        unregisterPoint()
+                    end
+                end
             }
             return pointId
         end
