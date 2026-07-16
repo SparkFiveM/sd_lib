@@ -1,7 +1,10 @@
 
 local RegisteredCallbacks = {}
+local CallbackHandlers = {}
 
 function RegisterCallback(name, cb)
+    CallbackHandlers[name] = cb
+
     if RegisteredCallbacks[name] then return end
     RegisteredCallbacks[name] = true
     
@@ -20,7 +23,12 @@ function RegisterCallback(name, cb)
         end
     elseif system == 'qbx' then
         if lib then
-            lib.callback.register(name, cb)
+            lib.callback.register(name, function(source, ...)
+                local handler = CallbackHandlers[name]
+                if handler then
+                    return handler(source, ...)
+                end
+            end)
         end
     elseif system == 'esx' then
         if ESX then

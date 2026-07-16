@@ -32,7 +32,7 @@ function IsUsingRadio()
     return false
 end
 
-local function SetRadioState(isUsingRadio)
+function SetRadioState(isUsingRadio)
     isUsingRadio = isUsingRadio == true
 
     if lastRadioState == isUsingRadio then
