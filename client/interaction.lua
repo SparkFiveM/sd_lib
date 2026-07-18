@@ -331,7 +331,7 @@ function CreateInteractionPoint(coords, options)
 
                     local currentHash = table.concat(optionHashParts, ",")
 
-                    if #allowedOptions > 0 then
+                    if #allowedOptions > 0 and threadActive then
                         if not isRegistered or currentHash ~= lastRegisteredOptionsHash then
                             if isRegistered then
                                 unregisterPoint()
@@ -358,9 +358,7 @@ function CreateInteractionPoint(coords, options)
                 coords = coordsVec,
                 stopThread = function()
                     threadActive = false
-                    if isRegistered then
-                        unregisterPoint()
-                    end
+                    unregisterPoint()
                 end
             }
             return pointId
