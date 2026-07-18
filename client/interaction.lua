@@ -347,7 +347,7 @@ function CreateInteractionPoint(coords, options)
                             lastRegisteredOptionsHash = ""
                         end
                     end
-                    Wait(500)
+                    Wait(250)
                 end
             end)
 
@@ -923,9 +923,10 @@ end
 function RemoveInteractionPoint(pointId)
     if not pointId then return end
     
+    local pointData = nil
     for resourceName, interactions in pairs(ResourceInteractions) do
         if interactions.points[pointId] then
-            local pointData = interactions.points[pointId]
+            pointData = interactions.points[pointId]
             if type(pointData) == 'table' and pointData.stopThread then pointData.stopThread() end
             interactions.points[pointId] = nil
             break
@@ -938,12 +939,8 @@ function RemoveInteractionPoint(pointId)
     elseif system == 'qb-target' then
         exports['qb-target']:RemoveZone(pointId)
     elseif system == 'is_interaction' then
-        for resourceName, interactions in pairs(ResourceInteractions) do
-            local data = interactions.points and interactions.points[pointId]
-            if data and type(data) == 'table' and data.type == 'is_interaction' then
-                exports['is_interaction']:removeCoords(data.coords, data.name)
-                break
-            end
+        if pointData and type(pointData) == 'table' and pointData.type == 'is_interaction' then
+            exports['is_interaction']:removeCoords(pointData.coords, pointData.name)
         end
     else
         exports['sd_lib']:HideTextUI()
