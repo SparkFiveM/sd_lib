@@ -278,7 +278,7 @@ function CreateInteractionPoint(coords, options)
         if GetResourceState('is_interaction') ~= 'missing' then
             local defaultDistance = options.distance or Config.Interaction.DefaultDistance
             local pointName = options.name or options.id or ('sd_' .. resourceName .. '_' .. math.random(10000, 99999))
-            local coordsVec = vec3(coords.x, coords.y, coords.z)
+            local coordsVec = vec3(coords.x, coords.y, coords.z + 1.0)
             
             local isRegistered = false
             local threadActive = true
@@ -375,15 +375,16 @@ function CreateVehicleInteraction(options)
         local vehicleId = 'drawtext_vehicle_' .. resourceName .. '_' .. math.random(10000, 99999)
         local threadActive = true
         CreateThread(function()
+            local distance = options.distance or Config.Interaction.DefaultDistance
             while threadActive do
                 local sleep = 1000
                 local ped = PlayerPedId()
                 local pcoords = GetEntityCoords(ped)
-                local vehicle = GetClosestVehicle(pcoords.x, pcoords.y, pcoords.z, options.distance or Config.Interaction.DefaultDistance, 0, 71)
+                local vehicle = GetClosestVehicle(pcoords.x, pcoords.y, pcoords.z, distance + 5.0, 0, 71)
                 if vehicle ~= 0 and DoesEntityExist(vehicle) then
                     local vcoords = GetEntityCoords(vehicle)
                     local dist = #(pcoords - vcoords)
-                    if dist <= (options.distance or Config.Interaction.DefaultDistance) then
+                    if dist <= distance then
                         sleep = 0
                         local availableOption = nil
                         for _, opt in ipairs(options.options) do
@@ -434,7 +435,7 @@ function CreateVehicleInteraction(options)
                  local sleep = 1000
                  local ped = PlayerPedId()
                  local pcoords = GetEntityCoords(ped)
-                 local vehicle = GetClosestVehicle(pcoords.x, pcoords.y, pcoords.z, distance, 0, 71)
+                 local vehicle = GetClosestVehicle(pcoords.x, pcoords.y, pcoords.z, distance + 5.0, 0, 71)
                  if vehicle ~= 0 and DoesEntityExist(vehicle) then
                       local vcoords = GetEntityCoords(vehicle)
                       local dist = #(pcoords - vcoords)
@@ -549,8 +550,15 @@ function CreateModelInteraction(models, options)
                 local foundEntity = nil
                 local distance = options.distance or Config.Interaction.DefaultDistance
                 for _, model in ipairs(models) do
-                    local entity = GetClosestObjectOfType(pcoords.x, pcoords.y, pcoords.z, distance, GetHashKey(model), false, false, false)
-                    if entity ~= 0 and DoesEntityExist(entity) then foundEntity = entity break end
+                    local modelHash = type(model) == 'string' and GetHashKey(model) or model
+                    local entity = GetClosestObjectOfType(pcoords.x, pcoords.y, pcoords.z, distance + 3.0, modelHash, false, false, false)
+                    if entity ~= 0 and DoesEntityExist(entity) then
+                        local dist = #(pcoords - GetEntityCoords(entity))
+                        if dist <= distance then
+                            foundEntity = entity
+                            break
+                        end
+                    end
                 end
                 
                 if foundEntity then
@@ -611,8 +619,15 @@ function CreateModelInteraction(models, options)
                  local pcoords = GetEntityCoords(ped)
                  local foundEntity = nil
                  for _, model in ipairs(models) do
-                     local entity = GetClosestObjectOfType(pcoords.x, pcoords.y, pcoords.z, distance, GetHashKey(model), false, false, false)
-                     if entity ~= 0 and DoesEntityExist(entity) then foundEntity = entity break end
+                     local modelHash = type(model) == 'string' and GetHashKey(model) or model
+                     local entity = GetClosestObjectOfType(pcoords.x, pcoords.y, pcoords.z, distance + 3.0, modelHash, false, false, false)
+                     if entity ~= 0 and DoesEntityExist(entity) then
+                         local dist = #(pcoords - GetEntityCoords(entity))
+                         if dist <= distance then
+                             foundEntity = entity
+                             break
+                         end
+                     end
                  end
                  
                  if foundEntity then
@@ -726,6 +741,57 @@ function CreateModelInteraction(models, options)
              labels = labels
          }
          return modelKey
+
+    elseif system == 'is_interaction' then
+        if GetResourceState('is_interaction') ~= 'missing' then
+            local defaultDistance = options.distance or Config.Interaction.DefaultDistance
+            local modelKey = 'sd_model_' .. resourceName .. '_' .. math.random(10000, 99999)
+            local processedOptions = {}
+            if options.options then
+                for i, opt in ipairs(options.options) do
+                    table.insert(processedOptions, {
+                        name = opt.name or ('ep_opt_' .. i),
+                        label = opt.label or 'Interact',
+                        icon = opt.icon or 'fa-solid fa-hand-pointer',
+                        onSelect = function(entity)
+                            if opt.canInteract and not opt.canInteract(entity) then return end
+                            if opt.onSelect then opt.onSelect(entity)
+                            elseif opt.action then opt.action(entity) end
+                        end,
+                    })
+                end
+            end
+            
+            local modelHashes = {}
+            if type(models) == 'table' then
+                for _, model in ipairs(models) do
+                    local hash = type(model) == 'string' and GetHashKey(model) or model
+                    table.insert(modelHashes, hash)
+                end
+            else
+                local hash = type(models) == 'string' and GetHashKey(models) or models
+                modelHashes = { hash }
+            end
+
+            exports['is_interaction']:addInteractionModel(modelKey, modelHashes, {
+                distance = defaultDistance,
+                distanceText = defaultDistance,
+                offset = {
+                    text = {x = 0.0, y = 0.0, z = 1.0},
+                    target = {x = 0.0, y = 0.0, z = 1.0}
+                },
+                options = processedOptions,
+            })
+
+            ResourceInteractions[resourceName].models[modelKey] = {
+                type = 'is_interaction',
+                models = modelHashes,
+                stopThread = function()
+                    exports['is_interaction']:removeModel(modelHashes, modelKey)
+                end
+            }
+            return modelKey
+        end
     end
 end
 
@@ -915,6 +981,46 @@ function CreateEntityInteraction(entity, options)
              if entityId then ResourceInteractions[resourceName].entities[entityId] = entity end
              return entityId
          end
+
+    elseif system == 'is_interaction' then
+        if GetResourceState('is_interaction') ~= 'missing' then
+            local defaultDistance = options.distance or Config.Interaction.DefaultDistance
+            local entityId = 'sd_entity_' .. resourceName .. '_' .. math.random(10000, 99999)
+            local processedOptions = {}
+            if options.options then
+                for i, opt in ipairs(options.options) do
+                    table.insert(processedOptions, {
+                        name = opt.name or ('ep_opt_' .. i),
+                        label = opt.label or 'Interact',
+                        icon = opt.icon or 'fa-solid fa-hand-pointer',
+                        onSelect = function(ent)
+                            if opt.canInteract and not opt.canInteract(ent) then return end
+                            if opt.onSelect then opt.onSelect(ent)
+                            elseif opt.action then opt.action(ent) end
+                        end,
+                    })
+                end
+            end
+
+            exports['is_interaction']:addInteractionLocalEntity(entityId, entity, {
+                distance = defaultDistance,
+                distanceText = defaultDistance,
+                offset = {
+                    text = {x = 0.0, y = 0.0, z = 1.0},
+                    target = {x = 0.0, y = 0.0, z = 1.0}
+                },
+                options = processedOptions,
+            })
+
+            ResourceInteractions[resourceName].entities[entityId] = {
+                type = 'is_interaction',
+                entity = entity,
+                stopThread = function()
+                    exports['is_interaction']:removeLocalEntity(entity, entityId)
+                end
+            }
+            return entityId
+        end
     end
 end
 
