@@ -134,6 +134,7 @@ function CreateInteractionPoint(coords, options)
          CreateThread(function()
              local distance = options.distance or Config.Interaction.DefaultDistance
              local isInRange = false
+             local currentLabel = nil
              while threadActive do
                  local sleep = 1000
                  local ped = PlayerPedId()
@@ -142,22 +143,37 @@ function CreateInteractionPoint(coords, options)
                  
                  if dist <= distance then
                      sleep = 0
-                     if not isInRange then
-                         isInRange = true
-                         if options.onEnter then options.onEnter() end
-                         local availableOption = nil
-                         if options.options and #options.options > 0 then
-                             for _, opt in ipairs(options.options) do
-                                 if not opt.canInteract or opt.canInteract() then
-                                     availableOption = opt
-                                     break
-                                 end
-                             end
-                             if availableOption then
-                                 exports['sd_lib']:ShowTextUI("[E] " .. (availableOption.label or 'Interact'), 'interaction')
+                     local availableOption = nil
+                     if options.options and #options.options > 0 then
+                         for _, opt in ipairs(options.options) do
+                             if not opt.canInteract or opt.canInteract() then
+                                 availableOption = opt
+                                 break
                              end
                          end
                      end
+
+                     if not isInRange then
+                         isInRange = true
+                         if options.onEnter then options.onEnter() end
+                         if availableOption then
+                             currentLabel = availableOption.label or 'Interact'
+                             exports['sd_lib']:ShowTextUI("[E] " .. currentLabel, 'interaction')
+                         else
+                             currentLabel = nil
+                         end
+                     else
+                         local newLabel = availableOption and (availableOption.label or 'Interact') or nil
+                         if currentLabel ~= newLabel then
+                             currentLabel = newLabel
+                             if newLabel then
+                                 exports['sd_lib']:ShowTextUI("[E] " .. newLabel, 'interaction')
+                             else
+                                 exports['sd_lib']:HideTextUI()
+                             end
+                         end
+                     end
+
                      if options.options and #options.options > 0 then
                          if IsControlJustPressed(0, 38) then
                              for _, opt in ipairs(options.options) do
@@ -173,6 +189,7 @@ function CreateInteractionPoint(coords, options)
                  else
                      if isInRange then
                          isInRange = false
+                         currentLabel = nil
                          if options.onExit then options.onExit() end
                          exports['sd_lib']:HideTextUI()
                      end
