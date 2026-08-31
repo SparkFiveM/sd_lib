@@ -4,7 +4,7 @@ lua54 'yes'
 
 author 'Spark Developments'
 description 'Framework Library'
-version '1.0.4'
+version '1.0.5'
 
 shared_scripts {
     '@ox_lib/init.lua',

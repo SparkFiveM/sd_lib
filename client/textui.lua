@@ -23,6 +23,7 @@ local function GetTextUISystem()
     local system = Config.TextUI.System
     if system == 'auto' then
         if GetResourceState('ox_lib') ~= 'missing' then return 'ox_lib'
+        elseif GetResourceState('InsaneScripts_hud') ~= 'missing' then return 'InsaneScripts_hud'
         elseif GetResourceState('esx_textui') ~= 'missing' then return 'esx'
         elseif GetResourceState('qb-core') ~= 'missing' then return 'qb-core'
         elseif GetResourceState('okokTextUI') ~= 'missing' then return 'okok'
@@ -34,7 +35,35 @@ end
 function ShowTextUI(message, option, extra)
     local system = GetTextUISystem()
     
-    if system == 'esx' then
+    if system == 'InsaneScripts_hud' or system == 'insane' or system == 'insane_hud' then
+        if GetResourceState('InsaneScripts_hud') ~= 'missing' then
+            if type(message) == 'table' then
+                exports['InsaneScripts_hud']:textUi(true, message)
+            else
+                local header = message
+                local caption = ""
+                local key = ""
+
+                local keyStr, textStr = message:match("^%[(.-)%]%s*(.*)")
+                if keyStr and textStr then
+                    key = keyStr
+                    header = textStr
+                elseif type(option) == 'string' and type(extra) == 'string' then
+                    caption = option
+                    key = extra
+                elseif type(option) == 'string' and #option <= 4 and not (option:find('top') or option:find('bottom') or option:find('center')) then
+                    key = option
+                end
+
+                exports['InsaneScripts_hud']:textUi(true, {
+                    header = header,
+                    caption = caption,
+                    key = key
+                })
+            end
+        end
+
+    elseif system == 'esx' then
         if GetResourceState('esx_textui') ~= 'missing' then
             exports['esx_textui']:TextUI(message, 'info')
         end
@@ -86,7 +115,12 @@ end
 function HideTextUI()
     local system = GetTextUISystem()
     
-    if system == 'esx' then
+    if system == 'InsaneScripts_hud' or system == 'insane' or system == 'insane_hud' then
+        if GetResourceState('InsaneScripts_hud') ~= 'missing' then
+            exports['InsaneScripts_hud']:textUi(false)
+        end
+
+    elseif system == 'esx' then
         if GetResourceState('esx_textui') ~= 'missing' then
             exports['esx_textui']:HideUI()
         end

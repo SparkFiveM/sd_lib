@@ -17,19 +17,19 @@ Config.Interaction = {
 
 ---[[====[ NOTIFICATION SYSTEM SETTINGS ]====]]
 Config.Notification = {
-    System = 'auto', -- 'auto', 'sd_notify', 'ox_lib', 'qb-core', 'vms_notify', 'es_extended', 'mythic_notify', 'okok'
+    System = 'auto', -- 'auto', 'sd_notify', 'ox_lib', 'InsaneScripts_hud', 'qb-core', 'vms_notify', 'es_extended', 'mythic_notify', 'okok'
     DefaultDuration = 5000
 }
 
 ---[[====[ PROGRESS SYSTEM SETTINGS ]====]]
 Config.Progress = {
-    System = 'auto', -- 'auto', 'ox_lib', 'qb-core', 'progressbar'
+    System = 'auto', -- 'auto', 'ox_lib', 'InsaneScripts_hud', 'qb-core', 'progressbar'
     DefaultDuration = 5000
 }
 
 ---[[====[ TEXTUI SYSTEM SETTINGS ]====]]
 Config.TextUI = {
-    System = 'auto', -- 'auto', 'ox_lib', 'qb-core', 'esx', 'okok', 'native'
+    System = 'auto', -- 'auto', 'ox_lib', 'InsaneScripts_hud', 'qb-core', 'esx', 'okok', 'native'
     DefaultPosition = 'bottom-center',
     DefaultDuration = 5000
 }

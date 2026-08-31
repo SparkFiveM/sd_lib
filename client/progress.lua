@@ -3,6 +3,7 @@ local function GetProgressSystem()
     local system = Config.Progress.System
     if system == 'auto' then
         if GetResourceState('ox_lib') ~= 'missing' then return 'ox_lib'
+        elseif GetResourceState('InsaneScripts_hud') ~= 'missing' then return 'InsaneScripts_hud'
         elseif GetResourceState('qb-core') ~= 'missing' then return 'qb-core'
         elseif GetResourceState('progressbar') ~= 'missing' then return 'progressbar'
         else return 'native' end
@@ -13,7 +14,32 @@ end
 function ShowProgress(label, duration, callback)
     local system = GetProgressSystem()
     
-    if system == 'native' then
+    if system == 'InsaneScripts_hud' or system == 'insane' or system == 'insane_hud' then
+        if GetResourceState('InsaneScripts_hud') ~= 'missing' then
+            local data = {}
+            if type(label) == 'table' then
+                data = label
+                callback = duration or callback
+            else
+                data = {
+                    duration = duration,
+                    label = label,
+                    canCancel = false,
+                    useWhileDead = false,
+                    controlDisables = {
+                        disableMovement = true,
+                        disableCarMovement = true,
+                        disableMouse = false,
+                        disableCombat = true,
+                    }
+                }
+            end
+            exports['InsaneScripts_hud']:progressBar(data, function(completed)
+                if completed and callback then callback() end
+            end)
+        end
+
+    elseif system == 'native' then
         CreateThread(function()
             local startTime = GetGameTimer()
             while GetGameTimer() - startTime < duration do
@@ -87,4 +113,18 @@ function ShowProgress(label, duration, callback)
     end
 end
 
+function CancelProgress()
+    local system = GetProgressSystem()
+    if system == 'InsaneScripts_hud' or system == 'insane' or system == 'insane_hud' then
+        if GetResourceState('InsaneScripts_hud') ~= 'missing' then
+            exports['InsaneScripts_hud']:cancelProgressBar()
+        end
+    elseif system == 'ox_lib' then
+        if lib and lib.cancelProgress then
+            lib.cancelProgress()
+        end
+    end
+end
+
 exports('ShowProgress', ShowProgress)
+exports('CancelProgress', CancelProgress)

@@ -4,6 +4,7 @@ local function GetNotificationSystem()
     if system == 'auto' then
         if GetResourceState('sd_notify') ~= 'missing' then return 'sd_notify'
         elseif GetResourceState('ox_lib') ~= 'missing' then return 'ox_lib'
+        elseif GetResourceState('InsaneScripts_hud') ~= 'missing' then return 'InsaneScripts_hud'
         elseif GetResourceState('mythic_notify') ~= 'missing' then return 'mythic_notify'
         elseif GetResourceState('okokNotify') ~= 'missing' then return 'okok'
         elseif GetResourceState('vms_notify') ~= 'missing' then return 'vms_notify'
@@ -17,7 +18,22 @@ end
 function ShowNotification(message, type, duration)
     local system = GetNotificationSystem()
     
-    if system == 'esx' then
+    if system == 'InsaneScripts_hud' or system == 'insane' or system == 'insane_hud' then
+        if GetResourceState('InsaneScripts_hud') ~= 'missing' then
+            local notifyType = type or 'info'
+            if notifyType == 'success' or notifyType == 'succes' then -- the docs say 'succes', correct me if its a typo
+                notifyType = 'succes'
+            elseif notifyType == 'error' then
+                notifyType = 'error'
+            elseif notifyType == 'warning' or notifyType == 'warn' then
+                notifyType = 'warning'
+            else
+                notifyType = 'info'
+            end
+            exports['InsaneScripts_hud']:notify(notifyType, message)
+        end
+
+    elseif system == 'esx' then
         if GetResourceState('es_extended') ~= 'missing' then
             exports['es_extended']:showNotification(message)
         end
