@@ -158,7 +158,7 @@ function CreateInteractionPoint(coords, options)
                          if options.onEnter then options.onEnter() end
                          if availableOption then
                              currentLabel = availableOption.label or 'Interact'
-                             exports['sd_lib']:ShowTextUI("[E] " .. currentLabel, 'interaction')
+                             exports['spark_lib']:ShowTextUI("[E] " .. currentLabel, 'interaction')
                          else
                              currentLabel = nil
                          end
@@ -167,9 +167,9 @@ function CreateInteractionPoint(coords, options)
                          if currentLabel ~= newLabel then
                              currentLabel = newLabel
                              if newLabel then
-                                 exports['sd_lib']:ShowTextUI("[E] " .. newLabel, 'interaction')
+                                 exports['spark_lib']:ShowTextUI("[E] " .. newLabel, 'interaction')
                              else
-                                 exports['sd_lib']:HideTextUI()
+                                 exports['spark_lib']:HideTextUI()
                              end
                          end
                      end
@@ -191,7 +191,7 @@ function CreateInteractionPoint(coords, options)
                          isInRange = false
                          currentLabel = nil
                          if options.onExit then options.onExit() end
-                         exports['sd_lib']:HideTextUI()
+                         exports['spark_lib']:HideTextUI()
                      end
                  end
                  Wait(sleep)
@@ -470,7 +470,7 @@ function CreateVehicleInteraction(options)
                                       end
                                   end
                                   if availableOption then
-                                      exports['sd_lib']:ShowTextUI("[E] " .. (availableOption.label or 'Interact'), 'interaction')
+                                      exports['spark_lib']:ShowTextUI("[E] " .. (availableOption.label or 'Interact'), 'interaction')
                                   end
                               end
                           end
@@ -489,14 +489,14 @@ function CreateVehicleInteraction(options)
                           if isInRange then
                               isInRange = false
                               if options.onExit then options.onExit(vehicle) end
-                              exports['sd_lib']:HideTextUI()
+                              exports['spark_lib']:HideTextUI()
                           end
                       end
                  else
                      if isInRange then
                          isInRange = false
                          if options.onExit then options.onExit() end
-                         exports['sd_lib']:HideTextUI()
+                         exports['spark_lib']:HideTextUI()
                      end
                  end
                  Wait(sleep)
@@ -664,7 +664,7 @@ function CreateModelInteraction(models, options)
                                      end
                                  end
                                  if availableOption then
-                                     exports['sd_lib']:ShowTextUI("[E] " .. (availableOption.label or 'Interact'), 'interaction')
+                                     exports['spark_lib']:ShowTextUI("[E] " .. (availableOption.label or 'Interact'), 'interaction')
                                  end
                              end
                          end
@@ -683,14 +683,14 @@ function CreateModelInteraction(models, options)
                          if isInRange then
                              isInRange = false
                              if options.onExit then options.onExit(foundEntity) end
-                             exports['sd_lib']:HideTextUI()
+                             exports['spark_lib']:HideTextUI()
                          end
                      end
                  else
                      if isInRange then
                          isInRange = false
                          if options.onExit then options.onExit() end
-                         exports['sd_lib']:HideTextUI()
+                         exports['spark_lib']:HideTextUI()
                      end
                  end
                  Wait(sleep)
@@ -896,7 +896,7 @@ function CreateEntityInteraction(entity, options)
                                  end
                              end
                              if availableOption then
-                                 exports['sd_lib']:ShowTextUI("[E] " .. (availableOption.label or 'Interact'), 'interaction')
+                                 exports['spark_lib']:ShowTextUI("[E] " .. (availableOption.label or 'Interact'), 'interaction')
                              end
                          end
                      end
@@ -915,7 +915,7 @@ function CreateEntityInteraction(entity, options)
                      if isInRange then
                          isInRange = false
                          if options.onExit then options.onExit(entity) end
-                         exports['sd_lib']:HideTextUI()
+                         exports['spark_lib']:HideTextUI()
                      end
                  end
                  Wait(sleep)
@@ -1064,7 +1064,7 @@ function RemoveInteractionPoint(pointId)
             exports['is_interaction']:removeCoords(pointData.coords, pointData.name)
         end
     else
-        exports['sd_lib']:HideTextUI()
+        exports['spark_lib']:HideTextUI()
     end
 end
 
@@ -1094,7 +1094,7 @@ function RemoveVehicleInteraction(vehicleId)
             break
         end
     end
-    exports['sd_lib']:HideTextUI()
+    exports['spark_lib']:HideTextUI()
 end
 
 function RemoveModelInteraction(modelId)
@@ -1116,7 +1116,7 @@ function RemoveModelInteraction(modelId)
             break
         end
     end
-    exports['sd_lib']:HideTextUI()
+    exports['spark_lib']:HideTextUI()
 end
 
 function RemoveEntityInteraction(entityIdOrEntity)
@@ -1140,7 +1140,7 @@ function RemoveEntityInteraction(entityIdOrEntity)
     local system = GetInteractionSystem()
     if system == 'ox_target' and type(entityIdOrEntity) == 'number' then exports.ox_target:removeLocalEntity(entityIdOrEntity)
     elseif system == 'qb-target' and type(entityIdOrEntity) == 'number' then exports['qb-target']:RemoveTargetEntity(entityIdOrEntity)
-    else exports['sd_lib']:HideTextUI()
+    else exports['spark_lib']:HideTextUI()
     end
 end
 

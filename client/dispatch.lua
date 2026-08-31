@@ -65,7 +65,7 @@ function Dispatch(coords, code, priority, content, jobs, title, info)
                 title = title or 'Alert',
                 description = content or 'No details provided',
                 code = code,
-                codeName = 'sd_lib_alert',
+                codeName = 'spark_lib_alert',
                 coords = coords,
                 icon = 'suspect',
                 priority = prio,

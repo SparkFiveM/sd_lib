@@ -1,5 +1,5 @@
 function ShowNotification(source, message, type, duration)
-    TriggerClientEvent('sd_lib:client:showNotification', source, message, type, duration)
+    TriggerClientEvent('spark_lib:client:showNotification', source, message, type, duration)
 end
 
 function GetFramework()

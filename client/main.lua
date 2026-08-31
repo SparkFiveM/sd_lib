@@ -64,7 +64,7 @@ function GetFramework()
     return framework
 end
 
-RegisterNetEvent('sd_lib:client:showNotification', function(message, type, duration)
+RegisterNetEvent('spark_lib:client:showNotification', function(message, type, duration)
     ShowNotification(message, type, duration)
 end)
 

@@ -40,7 +40,7 @@ function SetRadioState(isUsingRadio)
     end
 
     lastRadioState = isUsingRadio
-    TriggerEvent('sd_lib:radioStateChanged', isUsingRadio)
+    TriggerEvent('spark_lib:radioStateChanged', isUsingRadio)
 end
 
 RegisterNetEvent('pma-voice:radioActive', function(isUsingRadio)

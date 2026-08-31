@@ -182,7 +182,7 @@ function SpawnVehicle(model, cb, coords, isNetworked)
     elseif currentFramework == 'qbx' then
         if lib then
             local modelHash = type(model) == 'string' and joaat(model) or model
-            lib.callback('sd_lib:server:spawnVehicle', false, function(netId)
+            lib.callback('spark_lib:server:spawnVehicle', false, function(netId)
                 if netId then
                     local timeout = 0
                     while not NetworkDoesEntityExistWithNetworkId(netId) and timeout < 100 do
@@ -197,7 +197,7 @@ function SpawnVehicle(model, cb, coords, isNetworked)
             end, modelHash, coords, isNetworked ~= false)
             return
         else
-            print('[sd_lib] ox_lib is required for QBX vehicle spawning')
+            print('[spark_lib] ox_lib is required for QBX vehicle spawning')
         end
     end
 

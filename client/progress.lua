@@ -54,7 +54,7 @@ function ShowProgress(label, duration, callback)
     elseif system == 'progressbar' then
         if GetResourceState('progressbar') ~= 'missing' then
             exports['progressbar']:Progress({
-                name = "sd_lib_progress",
+                name = "spark_lib_progress",
                 duration = duration,
                 label = label,
                 useWhileDead = false,
@@ -73,7 +73,7 @@ function ShowProgress(label, duration, callback)
     elseif system == 'qb-core' then
         if GetResourceState('qb-core') ~= 'missing' then
             if QBCore then
-                QBCore.Functions.Progressbar("sd_lib_progress", label, duration, false, false, {
+                QBCore.Functions.Progressbar("spark_lib_progress", label, duration, false, false, {
                     disableMovement = true,
                     disableCarMovement = true,
                     disableMouse = false,

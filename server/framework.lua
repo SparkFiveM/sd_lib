@@ -28,7 +28,7 @@ elseif currentFramework == 'esx' then
 end
 
 if currentFramework == 'qbx' and lib then
-    lib.callback.register('sd_lib:server:spawnVehicle', function(source, modelHash, coords, isNetworked)
+    lib.callback.register('spark_lib:server:spawnVehicle', function(source, modelHash, coords, isNetworked)
         local spawnCoords = vector4(coords.x, coords.y, coords.z, coords.w or 0.0)
         local result = qbx.spawnVehicle({
             model = modelHash,
